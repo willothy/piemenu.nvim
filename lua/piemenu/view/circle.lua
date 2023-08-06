@@ -13,7 +13,10 @@ CircleTiles.__index = CircleTiles
 M.CircleTiles = CircleTiles
 
 function CircleTiles.open(defined_menus, view_setting)
-  vim.validate({ defined_menus = { defined_menus, "table" }, view_setting = { view_setting, "table" } })
+  vim.validate({
+    defined_menus = { defined_menus, "table" },
+    view_setting = { view_setting, "table" },
+  })
 
   local start_angle = view_setting.start_angle
   local end_angle = view_setting.end_angle
@@ -33,8 +36,12 @@ function CircleTiles.open(defined_menus, view_setting)
   end
 
   local tiles, moves = {}, {}
-  local angle_ranges = AngleRanges.new_one(start_angle, end_angle):exclude(overflow_angle_ranges):join()
-  local angles = AngleSplitter.new(start_angle, end_angle, angle_ranges, menus:count()):split()
+  local angle_ranges = AngleRanges.new_one(start_angle, end_angle)
+    :exclude(overflow_angle_ranges)
+    :join()
+  local angles =
+    AngleSplitter.new(start_angle, end_angle, angle_ranges, menus:count())
+      :split()
   if #angles == 0 then
     return nil, ("could not open: radius=%s"):format(radius)
   end
@@ -51,8 +58,16 @@ function CircleTiles.open(defined_menus, view_setting)
 
     local menu = menus[i]
     if not menu:is_empty() then
-      local tile, move =
-        Tile.open(menu, current_angle, prev_angle, next_angle, radius, tile_width, tile_height, origin_pos)
+      local tile, move = Tile.open(
+        menu,
+        current_angle,
+        prev_angle,
+        next_angle,
+        radius,
+        tile_width,
+        tile_height,
+        origin_pos
+      )
       table.insert(tiles, tile)
       table.insert(moves, move)
     end

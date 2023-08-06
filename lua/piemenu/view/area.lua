@@ -36,8 +36,14 @@ function TileArea.calculate_overflow(self, radius, origin_pos, width, height)
     local rad = math.acos(math.abs(distance) / r)
     if rad == rad then -- not nan
       local angle = Angle.from_radian(rad) + ext_angle
-      table.insert(raw_angle_ranges, AngleRange.new_0_to_360(base_angle - angle, base_angle))
-      table.insert(raw_angle_ranges, AngleRange.new_0_to_360(base_angle, base_angle + angle))
+      table.insert(
+        raw_angle_ranges,
+        AngleRange.new_0_to_360(base_angle - angle, base_angle)
+      )
+      table.insert(
+        raw_angle_ranges,
+        AngleRange.new_0_to_360(base_angle, base_angle + angle)
+      )
     end
   end)
   return AngleRanges.new(raw_angle_ranges)

@@ -9,7 +9,10 @@ Animation.__index = Animation
 M.Animation = Animation
 
 function Animation.new(items, duration)
-  vim.validate({ items = { items, "table" }, duration = { duration, "number" } })
+  vim.validate({
+    items = { items, "table" },
+    duration = { duration, "number" },
+  })
 
   local on_tick = function()
     local ok = true
@@ -98,7 +101,10 @@ function Move._move(self, x, y)
   end
   self._x = x
   self._y = y
-  vim.api.nvim_win_set_config(self._window_id, { row = self._y, col = self._x, relative = "editor" })
+  vim.api.nvim_win_set_config(
+    self._window_id,
+    { row = self._y, col = self._x, relative = "editor" }
+  )
   return true
 end
 

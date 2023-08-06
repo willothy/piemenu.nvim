@@ -34,10 +34,10 @@ function Background.open(name, position)
   vim.wo[window_id].winblend = 100
   vim.wo[window_id].scrolloff = 0
   vim.wo[window_id].sidescrolloff = 0
-  vim.api.nvim_win_set_cursor(window_id, { position[1] + 1, position[2] - 1 })
 
-  -- NOTE: show and move cursor to the window by <LeftDrag>
-  vim.cmd.redraw()
+  local ns = vim.api.nvim_create_namespace("piemenu")
+  vim.api.nvim_exec2("hi Cursor blend=100", { output = true })
+  vim.opt.guicursor:append("a:Cursor")
 
   vim.api.nvim_create_autocmd({ "WinLeave", "TabLeave", "BufLeave" }, {
     buffer = bufnr,
@@ -47,10 +47,13 @@ function Background.open(name, position)
     end,
   })
 
-  local ns = vim.api.nvim_create_namespace("piemenu")
   vim.api.nvim_set_decoration_provider(ns, {
     on_win = function(_, _, buf, topline)
-      if topline == 0 or buf ~= bufnr or not vim.api.nvim_win_is_valid(window_id) then
+      if
+        topline == 0
+        or buf ~= bufnr
+        or not vim.api.nvim_win_is_valid(window_id)
+      then
         return false
       end
       vim.fn.winrestview({ topline = 0, leftcol = 0 })
@@ -63,21 +66,16 @@ end
 
 function Background.close(self)
   windowlib.safe_close(self.window_id)
+  vim.opt.guicursor:remove("a:Cursor")
   vim.api.nvim_set_decoration_provider(self._ns, {})
 end
 
 function Background.click(self)
-  self:_click()
   if not vim.api.nvim_win_is_valid(self.window_id) then
     return nil
   end
-  return vim.api.nvim_win_get_cursor(self.window_id)
-end
-
-local mouse = vim.api.nvim_eval('"\\<LeftMouse>"')
--- replace on testing
-function Background._click()
-  vim.cmd.normal({ args = { mouse }, bang = true })
+  local mouse = vim.fn.getmousepos()
+  return { mouse.screenrow, mouse.screencol }
 end
 
 return M
